@@ -8,9 +8,9 @@ import (
 type Message int
 
 const (
-	HONEST      Message = 1
-	DEFAULT     Message = 0
-	ADVERSARIAL Message = -1
+	Honest      Message = 1
+	Default     Message = 0
+	Adversarial Message = -1
 )
 
 // Node Struct for a single node
@@ -21,20 +21,20 @@ type Node struct {
 }
 
 // Update the state of the node
-func (node Node) Update() {
-	if node.initialMessage == DEFAULT {
+func (node *Node) Update() {
+	if node.initialMessage == Default {
 		// TODO: Implement max counter algorithm
 	}
 }
 
 // AddPeers to the node
-func (node Node) AddPeers(peers []int) {
+func (node *Node) AddPeers(peers []int) {
 	node.peers = peers
 }
 
 // Broadcast the message from the node
-func (node Node) Broadcast() Message {
-	if node.initialMessage != DEFAULT {
+func (node *Node) Broadcast() Message {
+	if node.initialMessage != Default {
 		return node.initialMessage
 	} else {
 		// TODO: Return most common element
@@ -50,42 +50,51 @@ func CreateNodes(
 ) map[int]Node {
 
 	totalNodes := numHonestSample + numAdversarialSample + numNonSample
-	var nodes map[int]Node
-	nodes = make(map[int]Node)
+	var nodes = make(map[int]Node)
 
 	for i := 0; i < totalNodes; i++ {
 		if i < numHonestSample {
-			nodes[i] = Node{nodeId: i, peers: nil, initialMessage: HONEST}
+			nodes[i] = Node{nodeId: i, peers: nil, initialMessage: Honest}
 		} else if i < numHonestSample+numAdversarialSample {
-			nodes[i] = Node{nodeId: i, peers: nil, initialMessage: ADVERSARIAL}
+			nodes[i] = Node{nodeId: i, peers: nil, initialMessage: Adversarial}
 		} else {
-			nodes[i] = Node{nodeId: i, peers: nil, initialMessage: DEFAULT}
+			nodes[i] = Node{nodeId: i, peers: nil, initialMessage: Default}
 		}
 	}
 	return nodes
+}
+
+func generatePeerList(totalNodes int, nodeId int, numPeers int) []int {
+	// Get a list of all nodeIds
+	nodeIds := make([]int, totalNodes)
+	for i := 0; i < totalNodes; i++ {
+		nodeIds[i] = i
+	}
+
+	// Create a list of all possible peers excluding current nodeId
+	peers := append(nodeIds[:nodeId], nodeIds[nodeId+1:]...)
+
+	// Randomly sample numPeers nodes from the peer list of a single node
+	idx := rand.Perm(len(peers))
+	peerList := make([]int, numPeers)
+	for i := 0; i < numPeers; i++ {
+		peerList[i] = peers[idx[i]]
+	}
+	return peerList
 }
 
 // ConnectNodesToRandomPeers Connect nodes to a defined number of peers
 func ConnectNodesToRandomPeers(nodes map[int]Node, numPeers int) map[int]Node {
 	totalNodes := len(nodes)
 
-	for nodeId, node := range nodes {
+	for i := 0; i < len(nodes); i++ {
 		// Get a list of all the nodes
-		// TODO: This should sit outside, but the sampling breaks if it does
-		nodeIds := make([]int, totalNodes)
-		for i := 0; i < totalNodes; i++ {
-			nodeIds[i] = i
-		}
+		peerList := generatePeerList(totalNodes, i, numPeers)
 
-		// Randomly sample numPeers nodes from the peer list of a single node
-		peers := append(nodeIds[:nodeId], nodeIds[nodeId+1:]...)
-		idx := rand.Perm(len(peers))
-		peerSample := make([]int, numPeers)
-		for i := 0; i < numPeers; i++ {
-			peerSample[i] = peers[idx[i]]
-		}
-		// TODO: This does not work correctly
-		node.AddPeers(peerSample)
+		// Update the peer list of a node
+		currentNode := nodes[i]
+		currentNode.AddPeers(peerList)
+		nodes[i] = currentNode
 	}
 	return nodes
 }

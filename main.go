@@ -6,7 +6,13 @@ import (
 )
 
 func main() {
-	nodes := node.CreateNodes(3, 2, 5)
-	nodes = node.ConnectNodesToRandomPeers(nodes, 2)
+	numHonestSample := 3
+	numAdversarialSample := 2
+	numNonSample := 5
+	numPeers := 3
+
+	nodes := node.CreateNodes(numHonestSample, numAdversarialSample, numNonSample)
+	fmt.Println(nodes)
+	nodes = node.ConnectNodesToRandomPeers(nodes, numPeers)
 	fmt.Println(nodes)
 }
