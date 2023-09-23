@@ -9,9 +9,9 @@ import (
 type Message int
 
 const (
-	Honest      Message = 1
-	Default     Message = 0
-	Adversarial Message = -1
+	MessageHonest      Message = 1
+	MessageDefault     Message = 0
+	MessageAdversarial Message = -1
 )
 
 // Node Struct for a single node
@@ -24,15 +24,15 @@ type Node struct {
 
 func (n *Node) InitializeCounter() {
 	n.MessageCounter = map[Message]int{
-		Honest:      0,
-		Adversarial: 0,
-		Default:     0,
+		MessageHonest:      0,
+		MessageAdversarial: 0,
+		MessageDefault:     0,
 	}
 }
 
 // Update the state of the node
 func (n *Node) Update(messages []Message) {
-	if n.InitialMessage == Default {
+	if n.InitialMessage == MessageDefault {
 		for i := 0; i < len(messages); i++ {
 			n.MessageCounter[messages[i]] = n.MessageCounter[messages[i]] + 1
 		}
@@ -46,7 +46,7 @@ func (n *Node) AddPeers(peers []int) {
 
 // Broadcast the message from the node
 func (n *Node) Broadcast() Message {
-	if n.InitialMessage != Default {
+	if n.InitialMessage != MessageDefault {
 		// Return the initial message for sample nodes
 		return n.InitialMessage
 	} else {
@@ -55,7 +55,6 @@ func (n *Node) Broadcast() Message {
 		for k := range n.MessageCounter {
 			keys = append(keys, k)
 		}
-
 		sort.SliceStable(keys, func(i, j int) bool {
 			return n.MessageCounter[keys[i]] < n.MessageCounter[keys[j]]
 		})
@@ -69,23 +68,37 @@ func CreateNodes(
 	numAdversarialSample int,
 	numNonSample int,
 ) map[int]Node {
-
 	totalNodes := numHonestSample + numAdversarialSample + numNonSample
 	var nodes = make(map[int]Node)
 
-	for i := 0; i < totalNodes; i++ {
-		if i < numHonestSample {
-			nodes[i] = Node{NodeId: i, Peers: nil, InitialMessage: Honest, MessageCounter: nil}
-		} else if i < numHonestSample+numAdversarialSample {
-			nodes[i] = Node{NodeId: i, Peers: nil, InitialMessage: Adversarial, MessageCounter: nil}
+	for nodeId := 0; nodeId < totalNodes; nodeId++ {
+		if nodeId < numHonestSample {
+			nodes[nodeId] = Node{
+				NodeId:         nodeId,
+				Peers:          nil,
+				InitialMessage: MessageHonest,
+				MessageCounter: nil,
+			}
+		} else if nodeId < numHonestSample+numAdversarialSample {
+			nodes[nodeId] = Node{
+				NodeId:         nodeId,
+				Peers:          nil,
+				InitialMessage: MessageAdversarial,
+				MessageCounter: nil,
+			}
 		} else {
-			nodes[i] = Node{NodeId: i, Peers: nil, InitialMessage: Default, MessageCounter: nil}
+			nodes[nodeId] = Node{
+				NodeId:         nodeId,
+				Peers:          nil,
+				InitialMessage: MessageDefault,
+				MessageCounter: nil,
+			}
 		}
 
 		// Initialize message counter
-		n := nodes[i]
+		n := nodes[nodeId]
 		n.InitializeCounter()
-		nodes[i] = n
+		nodes[nodeId] = n
 	}
 	return nodes
 }
@@ -96,10 +109,8 @@ func generatePeerList(totalNodes int, nodeId int, numPeers int) []int {
 	for i := 0; i < totalNodes; i++ {
 		nodeIds[i] = i
 	}
-
 	// Create a list of all possible Peers excluding current NodeId
 	peers := append(nodeIds[:nodeId], nodeIds[nodeId+1:]...)
-
 	// Randomly sample numPeers nodes from the peer list of a single node
 	idx := rand.Perm(len(peers))
 	peerList := make([]int, numPeers)
@@ -112,7 +123,6 @@ func generatePeerList(totalNodes int, nodeId int, numPeers int) []int {
 // ConnectNodesToRandomPeers Connect nodes to a defined number of Peers
 func ConnectNodesToRandomPeers(nodes map[int]Node, numPeers int) map[int]Node {
 	totalNodes := len(nodes)
-
 	for i := 0; i < len(nodes); i++ {
 		// Get a list of all the nodes
 		peerList := generatePeerList(totalNodes, i, numPeers)
