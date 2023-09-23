@@ -8,7 +8,7 @@ import (
 
 func main() {
 	numHonestSample := 3
-	numAdversarialSample := 2
+	numAdversarialSample := 1
 	numNonSample := 6
 	numPeers := 3
 	cycles := 50
@@ -17,6 +17,6 @@ func main() {
 	nodes := node.CreateNodes(numHonestSample, numAdversarialSample, numNonSample)
 	states = stf.EvolveState(nodes, cycles, numPeers)
 
-	fmt.Println(nodes)
+	//fmt.Println(nodes)
 	fmt.Println(states)
 }
