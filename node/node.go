@@ -58,6 +58,7 @@ func (n *Node) Broadcast() Message {
 		sort.SliceStable(keys, func(i, j int) bool {
 			return n.MessageCounter[keys[i]] < n.MessageCounter[keys[j]]
 		})
+		// log.Println(len(n.MessageCounter), keys[len(keys)-1])
 		return keys[len(keys)-1]
 	}
 }

@@ -26,11 +26,12 @@ func EvolveState(nodes map[int]node.Node, cycles int, numPeers int) []int {
 				continue
 			}
 			// Add the node message to a queue with its peers
-			for nodeId := range n.Peers {
+			for _, nodeId := range n.Peers {
 				messageQueue[nodeId] = append(messageQueue[nodeId], msg)
 			}
 			nodes[i] = n
 		}
+		// log.Println("message queue", messageQueue)
 		// Update all nodes with the messages in the queue
 		for nodeId, messages := range messageQueue {
 			n := nodes[nodeId]
@@ -39,7 +40,7 @@ func EvolveState(nodes map[int]node.Node, cycles int, numPeers int) []int {
 		}
 		// Clear message queue
 		messageQueue = make(map[int][]node.Message)
-		log.Println(average(_nonSampleBroadcasts))
+		log.Println("average value", average(_nonSampleBroadcasts))
 		nonSampleBroadcasts = append(nonSampleBroadcasts, _nonSampleBroadcasts...)
 	}
 	return nonSampleBroadcasts
