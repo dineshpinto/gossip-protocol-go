@@ -103,6 +103,7 @@ func CreateNodes(
 	return nodes
 }
 
+// Generate a peer list for a given node
 func generatePeerList(totalNodes int, nodeId int, numPeers int) []int {
 	// Get a list of all nodeIds
 	nodeIds := make([]int, totalNodes)
@@ -126,7 +127,6 @@ func ConnectNodesToRandomPeers(nodes map[int]Node, numPeers int) map[int]Node {
 	for i := 0; i < len(nodes); i++ {
 		// Get a list of all the nodes
 		peerList := generatePeerList(totalNodes, i, numPeers)
-
 		// Update the peer list of a node
 		currentNode := nodes[i]
 		currentNode.AddPeers(peerList)
