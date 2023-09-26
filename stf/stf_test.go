@@ -7,7 +7,7 @@ import (
 
 func TestEvolveState(t *testing.T) {
 	expectedState := 1
-	nodes := node.CreateNodes(10, 5, 50)
+	nodes := node.CreateNodes(10, 1, 50)
 	state := EvolveState(nodes, 50, 6)
 	gotState := state[len(state)-1]
 	if gotState != expectedState {
