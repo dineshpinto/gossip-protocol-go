@@ -1,10 +1,5 @@
 package main
 
-import (
-	"gossip_protocol_go/node"
-	"gossip_protocol_go/stf"
-)
-
 func main() {
 	// Define network parameters
 	numHonestSample := 20
@@ -13,6 +8,6 @@ func main() {
 	numPeers := 10
 	cycles := 50
 	// Create network and evolve state
-	nodes := node.CreateNodes(numHonestSample, numAdversarialSample, numNonSample)
-	_ = stf.EvolveState(nodes, cycles, numPeers)
+	nodes := CreateNodes(numHonestSample, numAdversarialSample, numNonSample)
+	_ = EvolveState(nodes, cycles, numPeers)
 }

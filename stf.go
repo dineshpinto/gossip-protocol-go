@@ -1,28 +1,27 @@
-package stf
+package main
 
 import (
-	"gossip_protocol_go/node"
 	"log"
 )
 
 // EvolveState Evolve the state of the system in time
-func EvolveState(nodes map[int]node.Node, cycles int, numPeers int) []int {
-	messageQueue := make(map[int][]node.Message)
+func EvolveState(nodes map[int]Node, cycles int, numPeers int) []int {
+	messageQueue := make(map[int][]Message)
 	var nonSampleBroadcasts []int
 
 	for cycle := 0; cycle < cycles; cycle++ {
 		var _nonSampleBroadcasts []int
-		nodes = node.ConnectNodesToRandomPeers(nodes, numPeers)
+		nodes = ConnectNodesToRandomPeers(nodes, numPeers)
 		for i := 0; i < len(nodes); i++ {
 			n := nodes[i]
 			// Extract the broadcast message from each node
 			msg := n.Broadcast()
 			// Save the message for further analysis
-			if n.InitialMessage == node.MessageDefault {
+			if n.InitialMessage == MessageDefault {
 				_nonSampleBroadcasts = append(_nonSampleBroadcasts, int(msg))
 			}
 			// Don't add the message to the queue if the node has nothing to say
-			if msg == node.MessageDefault {
+			if msg == MessageDefault {
 				continue
 			}
 			// Add the node message to a queue with its peers
@@ -39,7 +38,7 @@ func EvolveState(nodes map[int]node.Node, cycles int, numPeers int) []int {
 			nodes[nodeId] = n
 		}
 		// Clear message queue
-		messageQueue = make(map[int][]node.Message)
+		messageQueue = make(map[int][]Message)
 		log.Println("average value", average(_nonSampleBroadcasts))
 		nonSampleBroadcasts = append(nonSampleBroadcasts, _nonSampleBroadcasts...)
 	}

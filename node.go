@@ -1,4 +1,4 @@
-package node
+package main
 
 import (
 	"math/rand"
@@ -22,12 +22,19 @@ type Node struct {
 	MessageCounter map[Message]int
 }
 
-func (n *Node) InitializeCounter() {
-	n.MessageCounter = map[Message]int{
+func newNode(nodeId int, initialMessage Message) Node {
+	counter := map[Message]int{
 		MessageHonest:      0,
 		MessageAdversarial: 0,
 		MessageDefault:     0,
 	}
+	n := Node{
+		NodeId:         nodeId,
+		Peers:          nil,
+		InitialMessage: initialMessage,
+		MessageCounter: counter,
+	}
+	return n
 }
 
 // Update the state of the node
@@ -39,8 +46,8 @@ func (n *Node) Update(messages []Message) {
 	}
 }
 
-// AddPeers to the node
-func (n *Node) AddPeers(peers []int) {
+// addPeers to the node
+func (n *Node) addPeers(peers []int) {
 	n.Peers = peers
 }
 
@@ -74,32 +81,13 @@ func CreateNodes(
 
 	for nodeId := 0; nodeId < totalNodes; nodeId++ {
 		if nodeId < numHonestSample {
-			nodes[nodeId] = Node{
-				NodeId:         nodeId,
-				Peers:          nil,
-				InitialMessage: MessageHonest,
-				MessageCounter: nil,
-			}
+			nodes[nodeId] = newNode(nodeId, MessageHonest)
 		} else if nodeId < numHonestSample+numAdversarialSample {
-			nodes[nodeId] = Node{
-				NodeId:         nodeId,
-				Peers:          nil,
-				InitialMessage: MessageAdversarial,
-				MessageCounter: nil,
-			}
-		} else {
-			nodes[nodeId] = Node{
-				NodeId:         nodeId,
-				Peers:          nil,
-				InitialMessage: MessageDefault,
-				MessageCounter: nil,
-			}
-		}
+			nodes[nodeId] = newNode(nodeId, MessageAdversarial)
 
-		// Initialize message counter
-		n := nodes[nodeId]
-		n.InitializeCounter()
-		nodes[nodeId] = n
+		} else {
+			nodes[nodeId] = newNode(nodeId, MessageDefault)
+		}
 	}
 	return nodes
 }
@@ -130,7 +118,7 @@ func ConnectNodesToRandomPeers(nodes map[int]Node, numPeers int) map[int]Node {
 		peerList := generatePeerList(totalNodes, i, numPeers)
 		// Update the peer list of a node
 		currentNode := nodes[i]
-		currentNode.AddPeers(peerList)
+		currentNode.addPeers(peerList)
 		nodes[i] = currentNode
 	}
 	return nodes
