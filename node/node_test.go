@@ -44,27 +44,31 @@ func TestConnectNodesToRandomPeers(t *testing.T) {
 	}
 }
 
-func TestNode_Broadcast(t *testing.T) {
+func TestSampleNode_Broadcast(t *testing.T) {
 	nodes := CreateNodes(10, 5, 50)
-	// Test Sample Node
-	sampleNode := nodes[0]
-	wantSampleBroadcast := MessageHonest
-	gotSampleBroadcast := sampleNode.Broadcast()
 
-	if gotSampleBroadcast != wantSampleBroadcast {
-		t.Errorf("Incorrect message broadcast by sample Node expected (%d) got (%d)",
-			wantSampleBroadcast, gotSampleBroadcast)
+	node := nodes[0]
+	wantBroadcast := MessageHonest
+	gotBroadcast := node.Broadcast()
+
+	if gotBroadcast != wantBroadcast {
+		t.Errorf("Incorrect message broadcast by sample Node expected (%d) "+
+			"got (%d)",
+			wantBroadcast, gotBroadcast)
 	}
+}
 
-	// Test Non Sample Node
-	nonSampleNode := nodes[len(nodes)-1]
-	wantNonSampleBroadcast := MessageDefault
-	gotNonSampleBroadcast := nonSampleNode.Broadcast()
+func TestNonSampleNode_Broadcast(t *testing.T) {
+	nodes := CreateNodes(10, 5, 50)
 
-	if gotNonSampleBroadcast != wantNonSampleBroadcast {
+	node := nodes[len(nodes)-1]
+	wantBroadcast := MessageDefault
+	gotBroadcast := node.Broadcast()
+
+	if gotBroadcast != wantBroadcast {
 		t.Errorf("Incorrect message broadcast by non-sample Node expected "+
 			"(%d) got (%d)",
-			wantNonSampleBroadcast, gotNonSampleBroadcast)
+			wantBroadcast, gotBroadcast)
 	}
 }
 
