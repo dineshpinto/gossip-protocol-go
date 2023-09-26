@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"math/rand"
 	"sort"
 )
@@ -78,13 +79,17 @@ func CreateNodes(
 ) map[int]Node {
 	totalNodes := numHonestSample + numAdversarialSample + numNonSample
 	var nodes = make(map[int]Node)
+	log.Printf(
+		"Setting up network with %d sample nodes (honest = %d, "+
+			"adversarial = %d) and %d non sample nodes\n",
+		numHonestSample+numAdversarialSample, numHonestSample, numAdversarialSample,
+		numNonSample)
 
 	for nodeId := 0; nodeId < totalNodes; nodeId++ {
 		if nodeId < numHonestSample {
 			nodes[nodeId] = newNode(nodeId, MessageHonest)
 		} else if nodeId < numHonestSample+numAdversarialSample {
 			nodes[nodeId] = newNode(nodeId, MessageAdversarial)
-
 		} else {
 			nodes[nodeId] = newNode(nodeId, MessageDefault)
 		}

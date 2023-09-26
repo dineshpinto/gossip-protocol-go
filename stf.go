@@ -9,6 +9,8 @@ func EvolveState(nodes map[int]Node, cycles int, numPeers int) []int {
 	messageQueue := make(map[int][]Message)
 	var nonSampleBroadcasts []int
 
+	log.Printf("Connecting each node to %d random peers\n", numPeers)
+
 	for cycle := 0; cycle < cycles; cycle++ {
 		var _nonSampleBroadcasts []int
 		nodes = ConnectNodesToRandomPeers(nodes, numPeers)
@@ -30,6 +32,8 @@ func EvolveState(nodes map[int]Node, cycles int, numPeers int) []int {
 			}
 			nodes[i] = n
 		}
+		log.Printf("[Cycle %d] avg value of non sample nodes = %.2f\n", cycle,
+			average(_nonSampleBroadcasts))
 		// log.Println("message queue", messageQueue)
 		// Update all nodes with the messages in the queue
 		for nodeId, messages := range messageQueue {
@@ -39,7 +43,7 @@ func EvolveState(nodes map[int]Node, cycles int, numPeers int) []int {
 		}
 		// Clear message queue
 		messageQueue = make(map[int][]Message)
-		log.Println("average value", average(_nonSampleBroadcasts))
+
 		nonSampleBroadcasts = append(nonSampleBroadcasts, _nonSampleBroadcasts...)
 	}
 	return nonSampleBroadcasts
