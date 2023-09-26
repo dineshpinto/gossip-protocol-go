@@ -1,3 +1,3 @@
-module gossip_protocol_go
+module github.com/dineshpinto/gossip-protocol-go
 
 go 1.21
