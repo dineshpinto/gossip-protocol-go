@@ -31,3 +31,41 @@ func TestCreateNodes(t *testing.T) {
 			wantNonSample, gotHonestSample, gotAdversarialSample, gotNonSample)
 	}
 }
+
+func TestConnectNodesToRandomPeers(t *testing.T) {
+	expectedPeers := 7
+	nodes := CreateNodes(10, 5, 50)
+	nodes = ConnectNodesToRandomPeers(nodes, expectedPeers)
+	gotPeers := len(nodes[0].Peers)
+
+	if gotPeers != expectedPeers {
+		t.Errorf("Incorrect connection of peers expected (%d) got (%d)",
+			expectedPeers, gotPeers)
+	}
+}
+
+func TestNode_Broadcast(t *testing.T) {
+	nodes := CreateNodes(10, 5, 50)
+	node := nodes[0]
+	wantBroadcast := MessageHonest
+	gotBroadcast := node.Broadcast()
+
+	if gotBroadcast != wantBroadcast {
+		t.Errorf("Incorrect message broadcast by node expected (%d) got (%d)",
+			wantBroadcast, gotBroadcast)
+	}
+}
+
+func TestNode_Update(t *testing.T) {
+	nodes := CreateNodes(10, 5, 50)
+	node := nodes[len(nodes)-1]
+
+	wantMessageCount := node.MessageCounter[MessageHonest] + 1
+	node.Update([]Message{MessageHonest})
+	gotMessageCount := node.MessageCounter[MessageHonest]
+
+	if gotMessageCount != wantMessageCount {
+		t.Errorf("Incorrect message update by node expected (%d) got (%d)",
+			wantMessageCount, gotMessageCount)
+	}
+}
