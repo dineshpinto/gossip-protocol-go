@@ -24,10 +24,20 @@ type Node struct {
 }
 
 func newNode(nodeId int, initialMessage Message) Node {
+	messageDefaultCounts := 0
+	messageHonestCounts := 0
+	messageAdversarialCounts := 0
+	if initialMessage == MessageDefault {
+		messageDefaultCounts += 1
+	} else if initialMessage == MessageHonest {
+		messageHonestCounts += 1
+	} else if initialMessage == MessageAdversarial {
+		messageAdversarialCounts += 1
+	}
 	counter := map[Message]int{
-		MessageHonest:      0,
-		MessageAdversarial: 0,
-		MessageDefault:     0,
+		MessageHonest:      messageHonestCounts,
+		MessageAdversarial: messageAdversarialCounts,
+		MessageDefault:     messageDefaultCounts,
 	}
 	n := Node{
 		NodeId:         nodeId,

@@ -48,7 +48,7 @@ func TestSampleNode_Broadcast(t *testing.T) {
 	nodes := CreateNodes(10, 5, 50)
 
 	node := nodes[0]
-	wantBroadcast := MessageHonest
+	wantBroadcast := node.InitialMessage
 	gotBroadcast := node.Broadcast()
 
 	if gotBroadcast != wantBroadcast {
@@ -62,7 +62,7 @@ func TestNonSampleNode_Broadcast(t *testing.T) {
 	nodes := CreateNodes(10, 5, 50)
 
 	node := nodes[len(nodes)-1]
-	wantBroadcast := MessageDefault
+	wantBroadcast := node.InitialMessage
 	gotBroadcast := node.Broadcast()
 
 	if gotBroadcast != wantBroadcast {
