@@ -6,7 +6,7 @@ import (
 )
 
 // EvolveState Evolve the state of the system in time
-func EvolveState(nodes map[int]node.Node, cycles int, numPeers int) []int {
+func EvolveState(nodes map[int]node.Node, cycles int, numPeers int) ([]int, error) {
 	messageQueue := make(map[int][]node.Message)
 	var nonSampleBroadcasts []int
 
@@ -14,7 +14,13 @@ func EvolveState(nodes map[int]node.Node, cycles int, numPeers int) []int {
 
 	for cycle := 0; cycle < cycles; cycle++ {
 		var _nonSampleBroadcasts []int
-		nodes = node.ConnectNodesToRandomPeers(nodes, numPeers)
+
+		err := error(nil)
+		nodes, err = node.ConnectNodesToRandomPeers(nodes, numPeers)
+		if err != nil {
+			return nil, err
+		}
+
 		for i := 0; i < len(nodes); i++ {
 			n := nodes[i]
 			// Extract the broadcast message from each node
@@ -46,7 +52,7 @@ func EvolveState(nodes map[int]node.Node, cycles int, numPeers int) []int {
 		messageQueue = make(map[int][]node.Message)
 		nonSampleBroadcasts = append(nonSampleBroadcasts, _nonSampleBroadcasts...)
 	}
-	return nonSampleBroadcasts
+	return nonSampleBroadcasts, nil
 }
 
 // Calculate the average value of an integer array

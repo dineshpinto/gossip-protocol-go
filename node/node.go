@@ -1,6 +1,7 @@
 package node
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"sort"
@@ -10,9 +11,9 @@ import (
 type Message int
 
 const (
-	MessageHonest      Message = 1
-	MessageDefault     Message = 0
-	MessageAdversarial Message = -1
+	MessageAdversarial Message = iota - 1
+	MessageDefault
+	MessageHonest
 )
 
 // Node Struct for a single node
@@ -86,14 +87,14 @@ func CreateNodes(
 	numHonestSample int,
 	numAdversarialSample int,
 	numNonSample int,
-) map[int]Node {
+) (map[int]Node, error) {
 	totalNodes := numHonestSample + numAdversarialSample + numNonSample
 	log.Printf(
 		"Setting up network with %d sample nodes (honest = %d, "+
 			"adversarial = %d) and %d non sample nodes\n",
 		numHonestSample+numAdversarialSample, numHonestSample, numAdversarialSample,
 		numNonSample)
-	var nodes = make(map[int]Node)
+	nodes := make(map[int]Node, totalNodes)
 	for nodeId := 0; nodeId < totalNodes; nodeId++ {
 		if nodeId < numHonestSample {
 			nodes[nodeId] = newNode(nodeId, MessageHonest)
@@ -103,7 +104,33 @@ func CreateNodes(
 			nodes[nodeId] = newNode(nodeId, MessageDefault)
 		}
 	}
-	return nodes
+
+	// Check node creation
+	actualHonest, actualAdversarial, actualDefault := 0, 0, 0
+	for i := 0; i < len(nodes); i++ {
+		// Check if nodes have at least one message
+		if nodes[i].MessageCounter[MessageHonest] != 1 &&
+			nodes[i].MessageCounter[MessageDefault] != 1 &&
+			nodes[i].MessageCounter[MessageAdversarial] != 1 {
+			return nil, fmt.Errorf("error creating nodes, no message")
+		}
+		// Check if the number of nodes is correct
+		if nodes[i].InitialMessage == MessageHonest {
+			actualHonest += 1
+		} else if nodes[i].InitialMessage == MessageAdversarial {
+			actualAdversarial += 1
+		} else if nodes[i].InitialMessage == MessageDefault {
+			actualDefault += 1
+		}
+
+	}
+	if len(nodes) != totalNodes ||
+		actualHonest != numHonestSample ||
+		actualAdversarial != numAdversarialSample ||
+		actualDefault != numNonSample {
+		return nil, fmt.Errorf("error creating nodes, wrong number of nodes")
+	}
+	return nodes, nil
 }
 
 // Generate a peer list for a given node
@@ -125,7 +152,7 @@ func generatePeerList(totalNodes int, nodeId int, numPeers int) []int {
 }
 
 // ConnectNodesToRandomPeers Connect nodes to a defined number of Peers
-func ConnectNodesToRandomPeers(nodes map[int]Node, numPeers int) map[int]Node {
+func ConnectNodesToRandomPeers(nodes map[int]Node, numPeers int) (map[int]Node, error) {
 	totalNodes := len(nodes)
 	for i := 0; i < len(nodes); i++ {
 		// Get a list of all the nodes
@@ -134,6 +161,10 @@ func ConnectNodesToRandomPeers(nodes map[int]Node, numPeers int) map[int]Node {
 		currentNode := nodes[i]
 		currentNode.addPeers(peerList)
 		nodes[i] = currentNode
+
+		if len(nodes[i].Peers) != numPeers {
+			return nil, fmt.Errorf("error connecting nodes to peers")
+		}
 	}
-	return nodes
+	return nodes, nil
 }
