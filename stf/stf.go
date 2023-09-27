@@ -44,7 +44,6 @@ func EvolveState(nodes map[int]node.Node, cycles int, numPeers int) []int {
 		}
 		// Clear message queue
 		messageQueue = make(map[int][]node.Message)
-
 		nonSampleBroadcasts = append(nonSampleBroadcasts, _nonSampleBroadcasts...)
 	}
 	return nonSampleBroadcasts

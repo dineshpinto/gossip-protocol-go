@@ -23,31 +23,6 @@ type Node struct {
 	MessageCounter map[Message]int
 }
 
-func newNode(nodeId int, initialMessage Message) Node {
-	messageDefaultCounts := 0
-	messageHonestCounts := 0
-	messageAdversarialCounts := 0
-	if initialMessage == MessageDefault {
-		messageDefaultCounts += 1
-	} else if initialMessage == MessageHonest {
-		messageHonestCounts += 1
-	} else if initialMessage == MessageAdversarial {
-		messageAdversarialCounts += 1
-	}
-	counter := map[Message]int{
-		MessageHonest:      messageHonestCounts,
-		MessageAdversarial: messageAdversarialCounts,
-		MessageDefault:     messageDefaultCounts,
-	}
-	n := Node{
-		NodeId:         nodeId,
-		Peers:          nil,
-		InitialMessage: initialMessage,
-		MessageCounter: counter,
-	}
-	return n
-}
-
 // Update the state of the node
 func (n *Node) Update(messages []Message) {
 	if n.InitialMessage == MessageDefault {
@@ -55,11 +30,6 @@ func (n *Node) Update(messages []Message) {
 			n.MessageCounter[messages[i]] = n.MessageCounter[messages[i]] + 1
 		}
 	}
-}
-
-// addPeers to the node
-func (n *Node) addPeers(peers []int) {
-	n.Peers = peers
 }
 
 // Broadcast the message from the node
@@ -78,6 +48,36 @@ func (n *Node) Broadcast() Message {
 		})
 		// log.Println(len(n.MessageCounter), keys[len(keys)-1])
 		return keys[len(keys)-1]
+	}
+}
+
+// addPeers to the node
+func (n *Node) addPeers(peers []int) {
+	n.Peers = peers
+}
+
+// Create a newNode with a node ID and initial message
+func newNode(nodeId int, initialMessage Message) Node {
+	messageDefaultCounts := 0
+	messageHonestCounts := 0
+	messageAdversarialCounts := 0
+	if initialMessage == MessageDefault {
+		messageDefaultCounts += 1
+	} else if initialMessage == MessageHonest {
+		messageHonestCounts += 1
+	} else if initialMessage == MessageAdversarial {
+		messageAdversarialCounts += 1
+	}
+	counter := map[Message]int{
+		MessageHonest:      messageHonestCounts,
+		MessageAdversarial: messageAdversarialCounts,
+		MessageDefault:     messageDefaultCounts,
+	}
+	return Node{
+		NodeId:         nodeId,
+		Peers:          nil,
+		InitialMessage: initialMessage,
+		MessageCounter: counter,
 	}
 }
 
