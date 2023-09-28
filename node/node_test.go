@@ -36,20 +36,19 @@ func TestCreateNodes(t *testing.T) {
 }
 
 func TestConnectNodesToRandomPeers(t *testing.T) {
-	expectedPeers := 7
+	wantPeers := 7
 	nodes, err := CreateNodes(10, 5, 50)
 	if err != nil {
 		t.Errorf("Error creating nodes %s", err)
 	}
-	nodes, err = ConnectNodesToRandomPeers(nodes, expectedPeers)
+	nodes, err = ConnectNodesToRandomPeers(nodes, wantPeers)
 	if err != nil {
 		t.Errorf("Error connecting nodes %s", err)
 	}
 	gotPeers := len(nodes[0].Peers)
-
-	if gotPeers != expectedPeers {
+	if gotPeers != wantPeers {
 		t.Errorf("Incorrect connection of peers expected (%d) got (%d)",
-			expectedPeers, gotPeers)
+			wantPeers, gotPeers)
 	}
 }
 
@@ -58,11 +57,9 @@ func TestSampleNode_Broadcast(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error creating nodes %s", err)
 	}
-
 	node := nodes[0]
 	wantBroadcast := node.InitialMessage
 	gotBroadcast := node.Broadcast()
-
 	if gotBroadcast != wantBroadcast {
 		t.Errorf("Incorrect message broadcast by sample Node expected (%d) "+
 			"got (%d)",
@@ -75,11 +72,9 @@ func TestNonSampleNode_Broadcast(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error creating nodes %s", err)
 	}
-
 	node := nodes[len(nodes)-1]
 	wantBroadcast := node.InitialMessage
 	gotBroadcast := node.Broadcast()
-
 	if gotBroadcast != wantBroadcast {
 		t.Errorf("Incorrect message broadcast by non-sample Node expected "+
 			"(%d) got (%d)",
@@ -93,11 +88,9 @@ func TestNode_Update(t *testing.T) {
 		t.Errorf("Error creating nodes %s", err)
 	}
 	node := nodes[len(nodes)-1]
-
 	wantMessageCount := node.MessageCounter[MessageHonest] + 1
 	node.Update([]Message{MessageHonest})
 	gotMessageCount := node.MessageCounter[MessageHonest]
-
 	if gotMessageCount != wantMessageCount {
 		t.Errorf("Incorrect message update by node expected (%d) got (%d)",
 			wantMessageCount, gotMessageCount)

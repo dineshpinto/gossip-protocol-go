@@ -122,7 +122,6 @@ func CreateNodes(
 		} else if nodes[i].InitialMessage == MessageDefault {
 			actualDefault += 1
 		}
-
 	}
 	if len(nodes) != totalNodes ||
 		actualHonest != numHonestSample ||

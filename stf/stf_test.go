@@ -6,7 +6,7 @@ import (
 )
 
 func TestEvolveState(t *testing.T) {
-	expectedState := 1
+	wantState := 1
 	nodes, err := node.CreateNodes(10, 1, 50)
 	if err != nil {
 		t.Errorf("Error creating nodes %s", err)
@@ -16,8 +16,8 @@ func TestEvolveState(t *testing.T) {
 		t.Errorf("Error evolving state %s", err)
 	}
 	gotState := state[len(state)-1]
-	if gotState != expectedState {
+	if gotState != wantState {
 		t.Errorf("Incorrect evolution of state expected (%d), got (%d)",
-			expectedState, gotState)
+			wantState, gotState)
 	}
 }
