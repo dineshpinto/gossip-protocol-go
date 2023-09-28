@@ -8,7 +8,7 @@ func TestCreateNodes(t *testing.T) {
 	wantHonestSample := 10
 	wantAdversarialSample := 5
 	wantNonSample := 50
-	nodes, err := CreateNodes(wantHonestSample, wantAdversarialSample, wantNonSample)
+	nodes, err := CreateNodes(wantHonestSample, wantAdversarialSample, wantNonSample, true)
 	if err != nil {
 		t.Errorf("Error creating nodes %s", err)
 	}
@@ -37,7 +37,7 @@ func TestCreateNodes(t *testing.T) {
 
 func TestConnectNodesToRandomPeers(t *testing.T) {
 	wantPeers := 7
-	nodes, err := CreateNodes(10, 5, 50)
+	nodes, err := CreateNodes(10, 5, 50, true)
 	if err != nil {
 		t.Errorf("Error creating nodes %s", err)
 	}
@@ -53,7 +53,7 @@ func TestConnectNodesToRandomPeers(t *testing.T) {
 }
 
 func TestSampleNode_Broadcast(t *testing.T) {
-	nodes, err := CreateNodes(10, 5, 50)
+	nodes, err := CreateNodes(10, 5, 50, true)
 	if err != nil {
 		t.Errorf("Error creating nodes %s", err)
 	}
@@ -68,7 +68,7 @@ func TestSampleNode_Broadcast(t *testing.T) {
 }
 
 func TestNonSampleNode_Broadcast(t *testing.T) {
-	nodes, err := CreateNodes(10, 5, 50)
+	nodes, err := CreateNodes(10, 5, 50, true)
 	if err != nil {
 		t.Errorf("Error creating nodes %s", err)
 	}
@@ -83,7 +83,7 @@ func TestNonSampleNode_Broadcast(t *testing.T) {
 }
 
 func TestNode_Update(t *testing.T) {
-	nodes, err := CreateNodes(10, 5, 50)
+	nodes, err := CreateNodes(10, 5, 50, true)
 	if err != nil {
 		t.Errorf("Error creating nodes %s", err)
 	}
@@ -94,5 +94,18 @@ func TestNode_Update(t *testing.T) {
 	if gotMessageCount != wantMessageCount {
 		t.Errorf("Incorrect message update by node expected (%d) got (%d)",
 			wantMessageCount, gotMessageCount)
+	}
+}
+
+func BenchmarkCreateNodes(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _ = CreateNodes(6, 4, 1000, false)
+	}
+}
+
+func BenchmarkConnectNodesToRandomPeers(b *testing.B) {
+	nodes, _ := CreateNodes(6, 4, 1000, false)
+	for i := 0; i < b.N; i++ {
+		_, _ = ConnectNodesToRandomPeers(nodes, 7)
 	}
 }

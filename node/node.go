@@ -87,13 +87,16 @@ func CreateNodes(
 	numHonestSample int,
 	numAdversarialSample int,
 	numNonSample int,
+	printLog bool,
 ) (map[int]Node, error) {
 	totalNodes := numHonestSample + numAdversarialSample + numNonSample
-	log.Printf(
-		"Setting up network with %d sample nodes (honest = %d, "+
-			"adversarial = %d) and %d non sample nodes\n",
-		numHonestSample+numAdversarialSample, numHonestSample, numAdversarialSample,
-		numNonSample)
+	if printLog {
+		log.Printf(
+			"Setting up network with %d sample nodes (honest = %d, "+
+				"adversarial = %d) and %d non sample nodes\n",
+			numHonestSample+numAdversarialSample, numHonestSample, numAdversarialSample,
+			numNonSample)
+	}
 	nodes := make(map[int]Node, totalNodes)
 	for nodeId := 0; nodeId < totalNodes; nodeId++ {
 		if nodeId < numHonestSample {

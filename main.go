@@ -14,11 +14,11 @@ func main() {
 	numPeers := 5
 	cycles := 50
 	// Create network and evolve state
-	nodes, err := node.CreateNodes(numHonestSample, numAdversarialSample, numNonSample)
+	nodes, err := node.CreateNodes(numHonestSample, numAdversarialSample, numNonSample, true)
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = stf.EvolveState(nodes, cycles, numPeers)
+	_, err = stf.EvolveState(nodes, cycles, numPeers, true)
 	if err != nil {
 		log.Fatal(err)
 	}
