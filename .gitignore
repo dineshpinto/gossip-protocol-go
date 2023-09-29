@@ -50,3 +50,5 @@ vendor/
 
 # Redis
 *.rdb
+
+golangci-lint
