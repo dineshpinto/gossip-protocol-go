@@ -6,13 +6,17 @@ import (
 )
 
 // EvolveState Evolve the state of the system in time
-func EvolveState(nodes map[int]node.Node, cycles int, numPeers int, printLog bool) ([]int, error) {
-	messageQueue := make(map[int][]node.Message)
-	var nonSampleBroadcasts []int
-
+func EvolveState(
+	nodes map[int]node.Node,
+	cycles int,
+	numPeers int,
+	printLog bool,
+) ([]int, error) {
 	if printLog {
 		log.Printf("Connecting each node to %d random peers\n", numPeers)
 	}
+	messageQueue := make(map[int][]node.Message)
+	var nonSampleBroadcasts []int
 
 	for cycle := 0; cycle < cycles; cycle++ {
 		var _nonSampleBroadcasts []int
@@ -42,8 +46,8 @@ func EvolveState(nodes map[int]node.Node, cycles int, numPeers int, printLog boo
 			nodes[i] = n
 		}
 		if printLog {
-			log.Printf("[Cycle %d] avg value of non sample nodes = %.2f\n", cycle,
-				average(_nonSampleBroadcasts))
+			log.Printf("[Cycle %d] avg value of non sample nodes = %.2f\n",
+				cycle, average(_nonSampleBroadcasts))
 		}
 		// log.Println("message queue", messageQueue)
 		// Update all nodes with the messages in the queue
