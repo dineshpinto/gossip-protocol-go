@@ -34,7 +34,6 @@ go test -bench=. -run=^# -benchtime=50x ./...
 ```
 goos: darwin
 goarch: arm64
-pkg: github.com/dineshpinto/gossip-protocol-go/node
 BenchmarkCreateNodes-8                        50            160448 ns/op
 BenchmarkConnectNodesToRandomPeers-8          50           6141139 ns/op
 BenchmarkEvolveState-8                        50        1424933124 ns/op

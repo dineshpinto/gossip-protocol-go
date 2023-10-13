@@ -62,11 +62,12 @@ func newNode(nodeId int, initialMessage Message) Node {
 	messageDefaultCounts := 0
 	messageHonestCounts := 0
 	messageAdversarialCounts := 0
-	if initialMessage == MessageDefault {
+	switch {
+	case initialMessage == MessageDefault:
 		messageDefaultCounts += 1
-	} else if initialMessage == MessageHonest {
+	case initialMessage == MessageHonest:
 		messageHonestCounts += 1
-	} else if initialMessage == MessageAdversarial {
+	case initialMessage == MessageAdversarial:
 		messageAdversarialCounts += 1
 	}
 	counter := map[Message]int{
