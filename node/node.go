@@ -59,9 +59,7 @@ func (n *Node) addPeers(peers []int) {
 
 // Create a newNode with a node ID and initial message
 func newNode(nodeId int, initialMessage Message) Node {
-	messageDefaultCounts := 0
-	messageHonestCounts := 0
-	messageAdversarialCounts := 0
+	messageDefaultCounts, messageHonestCounts, messageAdversarialCounts := 0, 0, 0
 	switch {
 	case initialMessage == MessageDefault:
 		messageDefaultCounts += 1
